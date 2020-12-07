@@ -1,0 +1,18 @@
+#!/bin/bash
+
+name=$1
+
+d=$(mktemp -d)
+
+cat >$d/WORKSPACE <<EOF
+workspace(name = "$name")
+EOF
+
+cat >$d/BUILD <<EOF
+package(default_visibility = ["//visibility:public"])
+exports_files(glob(["**"]))
+EOF
+
+touch $d/dummy
+
+echo $d
