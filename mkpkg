@@ -1,17 +1,15 @@
 #!/bin/bash
 
+set -euo pipefail
+
 name=$1
 
-d=$(mktemp -d)
-
-cat >$d/WORKSPACE <<EOF
-workspace(name = "$name")
-EOF
-
-cat >$d/BUILD <<EOF
-package(default_visibility = ["//visibility:public"])
-exports_files(["dummy"])
-EOF
+if [[ -d ${PKG_BASE:-} ]]; then
+    d=$PKG_BASE/$name
+    mkdir -p $d
+else
+    d=$(mktemp -d)
+fi
 
 touch $d/dummy
 

@@ -49,12 +49,10 @@ def _pkg_impl(rctx):
     mkpkg = rctx.path(rctx.attr.mkpkg)
     logpkg = rctx.path(rctx.attr.logpkg)
 
-    root = rctx.os.environ.get("SOME_ROOT")
-    if not root:
-        res = rctx.execute([mkpkg, rctx.name])
-        if res.return_code != 0:
-            fail(res.stderr)
-        root = res.stdout.strip()
+    res = rctx.execute([mkpkg, rctx.name])
+    if res.return_code != 0:
+        fail(res.stderr)
+    root = res.stdout.strip()
 
     for p in rctx.path(root).readdir():
         rctx.symlink(p, p.basename)
@@ -79,5 +77,6 @@ pkg = repository_rule(
     environ = [
         "SOME_ROOT",
         "PKG_LOG",
+        "PKG_BASE",
     ],
 )
