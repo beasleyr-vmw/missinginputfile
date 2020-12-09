@@ -1,0 +1,34 @@
+#!/bin/bash
+
+logf=$1; shift
+pkgname=$1; shift
+
+# Check package log for most recent external/$pkgname under Bazel's output
+# base.
+pkgdesc=$(
+    grep "^$pkgname," $logf |
+    tail -1 |
+    cut -d, -f 2-
+)
+
+generation=0
+is_broken=false
+
+if [[ -n $pkgdesc ]]; then
+    pkgdir=$(echo $pkgdesc | cut -d, -f 1)
+    generation=$(echo $pkgdesc | cut -d, -f 2)
+    if [[ -d $pkgdir ]]; then
+        for p in $pkgdir/*; do
+            # Find broken symlinks.
+            if [[ -h $p && ! -a $p ]]; then
+                is_broken=true
+                break
+            fi
+        done
+    fi
+    if $is_broken; then
+        generation=$((generation+1))
+    fi
+fi
+
+echo $generation

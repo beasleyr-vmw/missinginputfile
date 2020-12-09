@@ -1,0 +1,8 @@
+#!/bin/bash
+
+logf=$1; shift
+pkgname=$1; shift
+pkgdir=$1; shift
+genno=$1; shift
+
+echo "$pkgname,$pkgdir,$genno" >> $logf
